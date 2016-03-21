@@ -5,7 +5,6 @@ import (
 
 	"gopkg.in/resty.v0"
 	"golang.org/x/net/context"
-	"log"
 )
 
 type Client struct {
@@ -44,13 +43,7 @@ func (c *Client) delete(path string, v interface{}) (*resty.Response, error) {
 }
 
 func (c *Client) put(path string, params interface{}, v interface{}) (*resty.Response, error) {
-	resp, _ := c.client.R().SetBody(params).SetResult(&v).Put(c.toFullUrl(path))
-
-	log.Println(c.client.R().SetBody(params).SetResult(&v).Body)
-	log.Println(v)
-	log.Println("Response:", resp)
-
-	return resp, nil
+	return c.client.R().SetBody(params).SetResult(v).Put(c.toFullUrl(path))
 }
 
 func FromEnv() (*Client, error) {
