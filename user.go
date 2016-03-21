@@ -127,15 +127,15 @@ func (api *UserApi) GetUsers() ([]User, error) {
 }
 
 func (api *UserApi) CreateOrUpdateUser(user User) (User, error) {
-	return api.postUser("/api/v2/users/create_or_update.json", user)
+	return api.postUser("/api/v2/users/create_or_update.json", map[string]User{"user": user})
 }
 
 func (api *UserApi) CreateUser(user User) (User, error) {
-	return api.postUser("/api/v2/users.json", user)
+	return api.postUser("/api/v2/users.json", map[string]User{"user": user})
 }
 
 func (api *UserApi) UpdateUser(user User) (User, error) {
-	return api.updateUser(fmt.Sprintf("/api/v2/users/%d.json", user.Id), user)
+	return api.updateUser(fmt.Sprintf("/api/v2/users/%d.json", user.Id), map[string]User{"user": user})
 }
 
 func (api *UserApi) DeleteUser(id int) (User, error) {
