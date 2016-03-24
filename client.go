@@ -2,6 +2,7 @@ package zendesk
 
 import (
 	"fmt"
+	"os"
 
 	"gopkg.in/resty.v0"
 	"golang.org/x/net/context"
@@ -47,9 +48,9 @@ func (c *Client) put(path string, params interface{}, v interface{}) (*resty.Res
 }
 
 func FromEnv() (*Client, error) {
-	domain := "hellofresh1"
-	email := "ebe@hellofresh.com"
-	token := "nqn0lixOpzcYNK14VthJiIy9kA9pqrxrn13wiEIX"
+	domain := os.Getenv("ZENDESK_DOMAIN")
+	email := os.Getenv("ZENDESK_EMAIL")
+	token := os.Getenv("ZENDESK_TOKEN")
 
 	return FromToken(domain, email, token), nil
 }
