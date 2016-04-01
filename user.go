@@ -1,143 +1,115 @@
 package zendesk
 
 import (
-	"golang.org/x/net/context"
 	"fmt"
+	"github.com/mitchellh/mapstructure"
 )
 
-type Attachment struct {}
-
-type User struct {
-	Id                  int                    `json:"id,omitempty"`
-	Url                 string                 `json:"url,omitempty"`
-	Name                string                 `json:"name,omitempty"`
-	ExternalId          string                 `json:"external_id,omitempty"`
-	Alias               string                 `json:"alias,omitempty"`
-	CreatedAt           string                 `json:"created_at,omitempty"`
-	UpdatedAt           string                 `json:"updated_at,omitempty"`
-	Active              bool                   `json:"active,omitempty"`
-	Verified            bool                   `json:"verified,omitempty"`
-	Shared              bool                   `json:"shared,omitempty"`
-	SharedAgent         bool                   `json:"shared_agent,omitempty"`
-	Locale              string                 `json:"locale,omitempty"`
-	LocaleId            int                    `json:"locale_id,omitempty"`
-	TimeZone            string                 `json:"time_zone,omitempty"`
-	LastLoginAt         string                 `json:"last_login_at,omitempty"`
-	Email               string                 `json:"email,omitempty"`
-	Phone               string                 `json:"phone,omitempty"`
-	Signature           string                 `json:"signature,omitempty"`
-	Details             string                 `json:"details,omitempty"`
-	Notes               string                 `json:"notes,omitempty"`
-	OrganizationId      int                    `json:"organization_id,omitempty"`
-	Role                string                 `json:"role,omitempty"`
-	CustomRoleId        string                 `json:"custom_role_id,omitempty"`
-	Moderator           bool                   `json:"moderator,omitempty"`
-	TicketRestriction   string                 `json:"ticket_restriction,omitempty"`
-	OnlyPrivateComments bool                   `json:"only_private_comments,omitempty"`
-	Tags                []string               `json:"tags,omitempty"`
-	Suspended           bool                   `json:"suspended,omitempty"`
-	RestrictedAgent     bool                   `json:"restricted_agent,omitempty"`
-	Photo               *Attachment            `json:"photo,omitempty"`
-	UserFields          map[string]interface{} `json:"user_fields,omitempty"`
+type SingleUser struct {
+	User User `json:"user"`
 }
 
-type UserApi struct {
-	client  *Client
-	context context.Context
+type MultipleUser struct {
+	User []User `json:"users"`
 }
 
-func (api *UserApi) getUser(path string, params map[string]string) (User, error) {
-	response := struct {
-		User User `json:"user"`
-	}{}
+func (api *Api) GetUser(id int) (User, error) {
+	response, err := api.getHttpRequest(
+		fmt.Sprintf("/api/v2/users/%d.json", id),
+		nil,
+		SingleUser{},
+	)
 
-	_, err := api.client.get(path, params, &response)
+	var object SingleUser
+	err = mapstructure.Decode(response, &object)
 
 	if err != nil {
-		return User{}, err
+		panic(err)
 	}
 
-	return response.User, nil
+	return object.User, err;
 }
 
-func (api *UserApi) getUsers(path string, params map[string]string) ([]User, error) {
-	response := struct {
-		User []User `json:"users"`
-	}{}
+func (api *Api) GetUsers() ([]User, error) {
+	response, err := api.getHttpRequest(
+		"/api/v2/users.json",
+		nil,
+		MultipleUser{},
+	)
 
-	_, err := api.client.get(path, params, &response)
+	var object MultipleUser
+	err = mapstructure.Decode(response, &object)
 
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
-	return response.User, nil
+	return object.User, err;
 }
 
-func (api *UserApi) postUser(path string, payload interface{}) (User, error) {
-	response := struct {
-		User User `json:"user"`
-	}{}
+func (api *Api) CreateOrUpdateUser(user User) (User, error) {
+	response, err := api.postHttpRequest(
+		"/api/v2/users/create_or_update.json",
+		map[string]User{"user": user},
+		SingleUser{},
+	)
 
-	_, err := api.client.post(path, payload, &response)
+	var object = SingleUser{}
+	err = mapstructure.Decode(response, &object)
 
 	if err != nil {
-		return User{}, err
+		panic(err)
 	}
 
-	return response.User, nil
+	return object.User, err;
 }
 
-func (api *UserApi) deleteUser(path string) (User, error) {
-	response := struct {
-		User User `json:"user"`
-	}{}
+func (api *Api) CreateUser(user User) (User, error) {
+	response, err := api.postHttpRequest(
+		"/api/v2/users.json",
+		map[string]User{"user": user},
+		SingleUser{},
+	)
 
-	_, err := api.client.delete(path, &response)
+	var object SingleUser
+	err = mapstructure.Decode(response, &object)
 
 	if err != nil {
-		return User{}, err
+		panic(err)
 	}
 
-	return response.User, nil
+	return object.User, err;
 }
 
-func (api *UserApi) updateUser(path string, payload interface{}) (User, error) {
-	response := struct {
-		User User `json:"user"`
-	}{}
+func (api *Api) UpdateUser(user User) (User, error) {
+	response, err := api.updateHttpRequest(
+		fmt.Sprintf("/api/v2/users/%d.json", user.Id),
+		map[string]User{"user": user},
+		SingleUser{},
+	)
 
-	_, err := api.client.put(path, payload, &response)
+	var object SingleUser
+	err = mapstructure.Decode(response, &object)
 
 	if err != nil {
-		return User{}, err
+		panic(err)
 	}
 
-	return response.User, nil
+	return object.User, err;
 }
 
-//
+func (api *Api) DeleteUser(id int) (User, error) {
+	response, err := api.deleteHttpRequest(
+		fmt.Sprintf("/api/v2/users/%d.json", id),
+		SingleUser{},
+	)
 
-func (api *UserApi) GetUser(id int) (User, error) {
-	return api.getUser(fmt.Sprintf("/api/v2/users/%d.json", id), nil)
-}
+	var object SingleUser
+	err = mapstructure.Decode(response, &object)
 
-func (api *UserApi) GetUsers() ([]User, error) {
-	return api.getUsers("/api/v2/users.json", nil)
-}
+	if err != nil {
+		panic(err)
+	}
 
-func (api *UserApi) CreateOrUpdateUser(user User) (User, error) {
-	return api.postUser("/api/v2/users/create_or_update.json", map[string]User{"user": user})
-}
-
-func (api *UserApi) CreateUser(user User) (User, error) {
-	return api.postUser("/api/v2/users.json", map[string]User{"user": user})
-}
-
-func (api *UserApi) UpdateUser(user User) (User, error) {
-	return api.updateUser(fmt.Sprintf("/api/v2/users/%d.json", user.Id), map[string]User{"user": user})
-}
-
-func (api *UserApi) DeleteUser(id int) (User, error) {
-	return api.deleteUser(fmt.Sprintf("/api/v2/users/%d.json", id))
+	return object.User, err;
 }
