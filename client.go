@@ -21,7 +21,7 @@ func (c *Client) Users() *Api {
 }
 
 func (c *Client) toFullUrl(path string) string {
-	return fmt.Sprintf("https://%v.zendesk.com%s", c.domain, path)
+	return fmt.Sprintf("https://%v.zendesk.com/api/%s%s", os.Getenv("ZENDESK_API_VERSION"), c.domain, path)
 }
 
 func (c *Client) get(path string, params map[string]string, v interface{}) (*resty.Response, error) {
@@ -32,8 +32,8 @@ func (c *Client) post(path string, params interface{}, v interface{}) (*resty.Re
 	return c.client.R().SetBody(params).SetResult(v).Post(c.toFullUrl(path))
 }
 
-func (c *Client) delete(path string, v interface{}) (*resty.Response, error) {
-	return c.client.R().SetResult(v).Delete(c.toFullUrl(path))
+func (c *Client) delete(path string) (*resty.Response, error) {
+	return c.client.R().Delete(c.toFullUrl(path))
 }
 
 func (c *Client) put(path string, params interface{}, v interface{}) (*resty.Response, error) {
