@@ -12,20 +12,13 @@ type Client struct {
 	domain string
 	client *resty.Client
 }
-//
-func (c *Client) Users() *UserApi {
-	return &UserApi{
+
+func (c *Client) Users() *Api {
+	return &Api{
 		client:  c,
 		context: context.Background(),
 	}
 }
-
-//func (c *Client) Ticket() *TicketApi {
-//	return &TicketApi{
-//		client:  c,
-//		context: context.Background(),
-//	}
-//}
 
 func (c *Client) toFullUrl(path string) string {
 	return fmt.Sprintf("https://%v.zendesk.com%s", c.domain, path)
