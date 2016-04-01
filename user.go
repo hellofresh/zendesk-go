@@ -47,6 +47,23 @@ func (api *Api) GetUsers() ([]User, error) {
 	return object.User, err;
 }
 
+func (api *Api) GetUsersByGroup(groupId string) ([]User, error) {
+	response, err := api.getHttpRequest(
+		fmt.Sprintf("/api/v2/groups/%s/users.json", groupId),
+		nil,
+		MultipleUser{},
+	)
+
+	var object MultipleUser
+	err = mapstructure.Decode(response, &object)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return object.User, err;
+}
+
 func (api *Api) CreateOrUpdateUser(user User) (User, error) {
 	response, err := api.postHttpRequest(
 		"/api/v2/users/create_or_update.json",
