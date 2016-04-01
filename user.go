@@ -38,7 +38,6 @@ type User struct {
 	Suspended           bool                   `json:"suspended,omitempty"`
 	RestrictedAgent     bool                   `json:"restricted_agent,omitempty"`
 	Photo               *Attachment            `json:"photo,omitempty"`
-	UserFields          map[string]interface{} `json:"user_fields,omitempty"`
 }
 
 type UserApi struct {
@@ -124,6 +123,10 @@ func (api *UserApi) GetUser(id int) (User, error) {
 
 func (api *UserApi) GetUsers() ([]User, error) {
 	return api.getUsers("/api/v2/users.json", nil)
+}
+
+func (api *UserApi) GetUsersByGroup(groupId string) ([]User, error) {
+	return api.getUsers(fmt.Sprintf("/api/v2/groups/%s/users.json", groupId), nil)
 }
 
 func (api *UserApi) CreateOrUpdateUser(user User) (User, error) {
