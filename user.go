@@ -6,16 +6,16 @@ import (
 )
 
 type SingleUser struct {
-	User User `json:"user"`
+	Response User `json:"user"`
 }
 
 type MultipleUser struct {
-	User []User `json:"users"`
+	Response []User `json:"users"`
 }
 
 func (api *Api) GetUser(id int) (User, error) {
 	response, err := api.getHttpRequest(
-		fmt.Sprintf("/api/v2/users/%d.json", id),
+		fmt.Sprintf("/users/%d.json", id),
 		nil,
 		SingleUser{},
 	)
@@ -27,12 +27,12 @@ func (api *Api) GetUser(id int) (User, error) {
 		panic(err)
 	}
 
-	return object.User, err;
+	return object.Response, err
 }
 
 func (api *Api) GetUsers() ([]User, error) {
 	response, err := api.getHttpRequest(
-		"/api/v2/users.json",
+		"/users.json",
 		nil,
 		MultipleUser{},
 	)
@@ -44,12 +44,12 @@ func (api *Api) GetUsers() ([]User, error) {
 		panic(err)
 	}
 
-	return object.User, err;
+	return object.Response, err
 }
 
 func (api *Api) GetUsersByGroup(groupId string) ([]User, error) {
 	response, err := api.getHttpRequest(
-		fmt.Sprintf("/api/v2/groups/%s/users.json", groupId),
+		fmt.Sprintf("/groups/%s/users.json", groupId),
 		nil,
 		MultipleUser{},
 	)
@@ -61,12 +61,12 @@ func (api *Api) GetUsersByGroup(groupId string) ([]User, error) {
 		panic(err)
 	}
 
-	return object.User, err;
+	return object.Response, err
 }
 
 func (api *Api) CreateOrUpdateUser(user User) (User, error) {
 	response, err := api.postHttpRequest(
-		"/api/v2/users/create_or_update.json",
+		"/users/create_or_update.json",
 		map[string]User{"user": user},
 		SingleUser{},
 	)
@@ -78,12 +78,12 @@ func (api *Api) CreateOrUpdateUser(user User) (User, error) {
 		panic(err)
 	}
 
-	return object.User, err;
+	return object.Response, err
 }
 
 func (api *Api) CreateUser(user User) (User, error) {
 	response, err := api.postHttpRequest(
-		"/api/v2/users.json",
+		"/users.json",
 		map[string]User{"user": user},
 		SingleUser{},
 	)
@@ -95,12 +95,12 @@ func (api *Api) CreateUser(user User) (User, error) {
 		panic(err)
 	}
 
-	return object.User, err;
+	return object.Response, err
 }
 
 func (api *Api) UpdateUser(user User) (User, error) {
 	response, err := api.updateHttpRequest(
-		fmt.Sprintf("/api/v2/users/%d.json", user.Id),
+		fmt.Sprintf("/users/%d.json", user.Id),
 		map[string]User{"user": user},
 		SingleUser{},
 	)
@@ -112,21 +112,13 @@ func (api *Api) UpdateUser(user User) (User, error) {
 		panic(err)
 	}
 
-	return object.User, err;
+	return object.Response, err
 }
 
-func (api *Api) DeleteUser(id int) (User, error) {
+func (api *Api) DeleteUser(id int) (int, error) {
 	response, err := api.deleteHttpRequest(
-		fmt.Sprintf("/api/v2/users/%d.json", id),
-		SingleUser{},
+		fmt.Sprintf("/users/%d.json", id),
 	)
 
-	var object SingleUser
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return object.User, err;
+	return response.StatusCode(), err
 }
