@@ -1,13 +1,4 @@
-package interfaces
-
-import (
-	"gopkg.in/resty.v0"
-)
-
-type Client struct {
-	Domain string
-	Client *resty.Client
-}
+package zendesk
 
 type Attachment struct {}
 
