@@ -89,7 +89,7 @@ func (api *Api) CreateTicket(ticket Ticket) (Ticket, error) {
 func (api *Api) UpdateTicket(ticket Ticket) (Ticket, error) {
 	response, err := api.updateHttpRequest(
 		fmt.Sprintf("/tickets/%d.json", ticket.Id),
-		map[string]User{"ticket": ticket},
+		map[string]Ticket{"ticket": ticket},
 		SingleTicket{},
 	)
 
