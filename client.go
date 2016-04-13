@@ -13,7 +13,7 @@ type Client struct {
 	client *resty.Client
 }
 
-func (c *Client) Users() *Api {
+func (c *Client) ZendeskApi() *Api {
 	return &Api{
 		client:  c,
 		context: context.Background(),
