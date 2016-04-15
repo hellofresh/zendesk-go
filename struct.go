@@ -1,5 +1,13 @@
 package zendesk
 
+type ZendeskConfiguration struct {
+	ApiVersion string `yaml:"api_version"`
+	Domain string `yaml:"domain"`
+	Email string `yaml:"email"`
+	Token string `yaml:"token"`
+	Password string `yaml:"password"`
+}
+
 type Attachment struct {}
 type Via struct {}
 
