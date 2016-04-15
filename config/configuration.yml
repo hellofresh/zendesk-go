@@ -1,0 +1,5 @@
+api_version: "v2"
+domain: DOMAIN
+email: EMAIL
+password: PASSWORD
+token: TOKEN
