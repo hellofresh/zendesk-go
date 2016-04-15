@@ -3,6 +3,7 @@ package zendesk
 import (
 	"golang.org/x/net/context"
 	"gopkg.in/resty.v0"
+	"encoding/json"
 )
 
 type Api struct {
@@ -10,16 +11,14 @@ type Api struct {
 	context context.Context
 }
 
-func (api *Api) getHttpRequest(path string, params map[string]string, response interface{}) (interface{}, error) {
-	u := response
-
-	_, err := api.client.get(path, params, &u)
+func (api *Api) getHttpRequest(path string, params map[string]string) (*resty.Response, error) {
+	resp, err := api.client.get(path, params)
 
 	if err != nil {
-		return response, err
+		return resp, err
 	}
 
-	return u, nil
+	return resp, nil
 }
 
 func (api *Api) postHttpRequest(path string, payload interface{}, response interface{}) (interface{}, error) {
@@ -60,4 +59,8 @@ func (api *Api) updateHttpRequestGetResponse(path string, payload interface{}) (
 	}
 
 	return response, nil
+}
+
+func (api *Api) parseResponseToInterface(response *resty.Response, v interface{}) {
+	json.Unmarshal(response.Body(), &v)
 }
