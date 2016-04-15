@@ -66,18 +66,13 @@ func (api *Api) GetAssignedTicketsFromUser(id int) ([]Ticket, error) {
 }
 
 func (api *Api) CreateTicket(ticket Ticket) (Ticket, error) {
-	response, err := api.postHttpRequest(
+	var object SingleTicket
+
+	_, err := api.postHttpRequest(
 		"/tickets.json",
 		map[string]Ticket{"ticket": ticket},
-		SingleTicket{},
+		&object,
 	)
-
-	var object SingleTicket
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
 
 	return object.Response, err
 }
@@ -85,13 +80,11 @@ func (api *Api) CreateTicket(ticket Ticket) (Ticket, error) {
 func (api *Api) UpdateTicket(ticket Ticket) (Ticket, error) {
 	var object SingleTicket
 
-	response, err := api.updateHttpRequest(
+	_, err := api.updateHttpRequest(
 		fmt.Sprintf("/tickets/%d.json", ticket.Id),
 		map[string]Ticket{"ticket": ticket},
 		&object,
 	)
-
-	api.parseResponseToInterface(response, &object)
 
 	return object.Response, err
 }
