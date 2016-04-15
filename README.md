@@ -6,12 +6,13 @@ How to use?
 
 ## Configuration
 
-You need to add the follow environment variables:
+Update the configuration.yml file inside config folder:
 
 ```
-ZENDESK_DOMAIN = your domain
-ZENDESK_EMAIL = email to access
-ZENDESK_TOKEN = token
+domain: DOMAIN
+email: EMAIL
+password: PASSWORD
+token: TOKEN
 ```
 
 The service uses API token to communicate with Zendesk.
@@ -21,7 +22,9 @@ The service uses API token to communicate with Zendesk.
 import "github.com/hellofresh/zendesk-go"
 
 func main() {
-    client, _ := zendesk.FromEnv()
+    client, _ := zendesk.FromEnv(
+        zendesk.LoadConfiguration("./config/configuration.yml"),
+    )
 }
 ```
 
@@ -33,7 +36,9 @@ user := zendesk.User {
     Email: [email],
 }
 
-client, _ := zendesk.FromEnv()
+client, _ := zendesk.FromEnv(
+    zendesk.LoadConfiguration("./config/configuration.yml"),
+)
 
 u, err := client.ZendeskApi().CreateOrUpdateUser(user)
 
