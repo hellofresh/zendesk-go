@@ -2,7 +2,7 @@ package zendesk
 
 import (
 	"fmt"
-	"github.com/mitchellh/mapstructure"
+	"gopkg.in/resty.v0"
 )
 
 type SingleUser struct {
@@ -17,100 +17,61 @@ func (api *Api) GetUser(id int) (User, error) {
 	response, err := api.getHttpRequest(
 		fmt.Sprintf("/users/%d.json", id),
 		nil,
-		SingleUser{},
 	)
 
-	var object SingleUser
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return object.Response, err
+	return api.returnSingleUser(response), err
 }
 
 func (api *Api) GetUsers() ([]User, error) {
 	response, err := api.getHttpRequest(
 		"/users.json",
 		nil,
-		MultipleUser{},
 	)
 
-	var object MultipleUser
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return object.Response, err
+	return api.returnMultipleUser(response), err
 }
 
 func (api *Api) GetUsersByGroup(groupId string) ([]User, error) {
 	response, err := api.getHttpRequest(
 		fmt.Sprintf("/groups/%s/users.json", groupId),
 		nil,
-		MultipleUser{},
 	)
 
-	var object MultipleUser
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return object.Response, err
+	return api.returnMultipleUser(response), err
 }
 
 func (api *Api) CreateOrUpdateUser(user User) (User, error) {
-	response, err := api.postHttpRequest(
+	var object SingleUser
+
+	_, err := api.postHttpRequest(
 		"/users/create_or_update.json",
 		map[string]User{"user": user},
-		SingleUser{},
+		&object,
 	)
-
-	var object = SingleUser{}
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
 
 	return object.Response, err
 }
 
 func (api *Api) CreateUser(user User) (User, error) {
-	response, err := api.postHttpRequest(
+	var object SingleUser
+
+	_, err := api.postHttpRequest(
 		"/users.json",
 		map[string]User{"user": user},
-		SingleUser{},
+		&object,
 	)
-
-	var object SingleUser
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
 
 	return object.Response, err
 }
 
 func (api *Api) UpdateUser(user User) (User, error) {
-	response, err := api.updateHttpRequest(
+	var object SingleUser
+
+	_, err := api.updateHttpRequest(
 		fmt.Sprintf("/users/%d.json", user.Id),
 		map[string]User{"user": user},
-		SingleUser{},
+		&object,
 	)
-
-	var object SingleUser
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
 
 	return object.Response, err
 }
@@ -121,4 +82,20 @@ func (api *Api) DeleteUser(id int) (int, error) {
 	)
 
 	return response.StatusCode(), err
+}
+
+func (api *Api) returnMultipleUser(response *resty.Response) ([]User) {
+	var object MultipleUser
+
+	api.parseResponseToInterface(response, &object)
+
+	return object.Response
+}
+
+func (api *Api) returnSingleUser(response *resty.Response) (User) {
+	var object SingleUser
+
+	api.parseResponseToInterface(response, &object)
+
+	return object.Response
 }

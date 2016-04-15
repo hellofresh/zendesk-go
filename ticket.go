@@ -15,18 +15,14 @@ type MultipleTicket struct {
 }
 
 func (api *Api) GetTicket(id int) (Ticket, error) {
+	var object SingleTicket
+
 	response, err := api.getHttpRequest(
 		fmt.Sprintf("/tickets/%d.json", id),
 		nil,
-		SingleTicket{},
 	)
 
-	var object SingleTicket
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
+	api.parseResponseToInterface(response, &object)
 
 	return object.Response, err
 }
@@ -87,18 +83,15 @@ func (api *Api) CreateTicket(ticket Ticket) (Ticket, error) {
 }
 
 func (api *Api) UpdateTicket(ticket Ticket) (Ticket, error) {
+	var object SingleTicket
+
 	response, err := api.updateHttpRequest(
 		fmt.Sprintf("/tickets/%d.json", ticket.Id),
 		map[string]Ticket{"ticket": ticket},
-		SingleTicket{},
+		&object,
 	)
 
-	var object SingleTicket
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
+	api.parseResponseToInterface(response, &object)
 
 	return object.Response, err
 }
@@ -121,18 +114,14 @@ func (api *Api) DeleteTicket(id int) (int, error) {
 }
 
 func (api *Api) getMultiple(url string) ([]Ticket, error) {
+	var object MultipleTicket
+
 	response, err := api.getHttpRequest(
 		url,
 		nil,
-		MultipleTicket{},
 	)
 
-	var object MultipleTicket
-	err = mapstructure.Decode(response, &object)
-
-	if err != nil {
-		panic(err)
-	}
+	api.parseResponseToInterface(response, &object)
 
 	return object.Response, err
 }
