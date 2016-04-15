@@ -2,7 +2,6 @@ package zendesk
 
 import (
 	"fmt"
-	"github.com/mitchellh/mapstructure"
 	"strings"
 )
 
