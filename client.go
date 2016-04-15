@@ -2,15 +2,17 @@ package zendesk
 
 import (
 	"fmt"
-	"os"
 
+	"gopkg.in/yaml.v2"
 	"gopkg.in/resty.v0"
 	"golang.org/x/net/context"
+	"io/ioutil"
 )
 
 type Client struct {
 	domain string
 	client *resty.Client
+	apiVersion string
 }
 
 func (c *Client) ZendeskApi() *Api {
@@ -21,42 +23,52 @@ func (c *Client) ZendeskApi() *Api {
 }
 
 func (c *Client) toFullUrl(path string) string {
-	return fmt.Sprintf("https://%v.zendesk.com/api/%s%s", os.Getenv("ZENDESK_API_VERSION"), c.domain, path)
+	return fmt.Sprintf("https://%v.zendesk.com/api/%s/%s", c.domain, c.apiVersion, path)
 }
 
-func (c *Client) get(path string, params map[string]string, v interface{}) (*resty.Response, error) {
-	return c.client.R().SetQueryParams(params).SetResult(v).Get(c.toFullUrl(path))
+func (c *Client) get(path string, params map[string]string) (*resty.Response, error) {
+	return c.client.R().SetQueryParams(params).Get(c.toFullUrl(path))
 }
 
 func (c *Client) post(path string, params interface{}, v interface{}) (*resty.Response, error) {
 	return c.client.R().SetBody(params).SetResult(v).Post(c.toFullUrl(path))
 }
 
-func (c *Client) delete(path string) (*resty.Response, error) {
-	return c.client.R().Delete(c.toFullUrl(path))
-}
-
 func (c *Client) put(path string, params interface{}, v interface{}) (*resty.Response, error) {
 	return c.client.R().SetBody(params).SetResult(v).Put(c.toFullUrl(path))
 }
 
-func FromEnv() (*Client, error) {
-	domain := os.Getenv("ZENDESK_DOMAIN")
-	email := os.Getenv("ZENDESK_EMAIL")
-	token := os.Getenv("ZENDESK_TOKEN")
-
-	return FromToken(domain, email, token), nil
+func (c *Client) delete(path string) (*resty.Response, error) {
+	return c.client.R().Delete(c.toFullUrl(path))
 }
 
-func FromToken(domain, email string, token string) *Client {
-	username := fmt.Sprintf("%s/token", email)
+func FromToken(config ZendeskConfiguration) *Client {
+	username := fmt.Sprintf("%s/token", config.Email)
 
-	client := resty.SetBasicAuth(username, token)
+	client := resty.SetBasicAuth(username, config.Token)
 	client.SetHeader("Accept", "application/json")
 	client.SetHeader("Content-Type", "application/json")
 
 	return &Client{
-		domain: domain,
+		domain: config.Domain,
 		client: client,
+		apiVersion: config.ApiVersion,
 	}
+}
+
+func LoadConfiguration(path string) (ZendeskConfiguration) {
+	zendeskConfiguration := ZendeskConfiguration{}
+	zendeskConfigurationFile, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		fmt.Errorf("error: %v", err)
+	}
+
+	err = yaml.Unmarshal(zendeskConfigurationFile, &zendeskConfiguration)
+
+	if err != nil {
+		fmt.Errorf("error: %v", err)
+	}
+
+	return zendeskConfiguration
 }
