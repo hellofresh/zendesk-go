@@ -52,16 +52,16 @@ func (api *Api) CreateOrUpdateUser(user User) (User, error) {
 	return object.Response, err
 }
 
-func (api *Api) CreateOrUpdateManyUsers(users []User) ([]User, error) {
-	var object MultipleUser
+func (api *Api) CreateOrUpdateManyUsers(users []User) (Job, error) {
+	var object Job
 
 	_, err := api.postHttpRequest(
-		"/users/created_or_update_many.json",
+		"/users/create_or_update_many.json",
 		map[string][]User{"users": users},
 		&object,
 	)
 
-	return object.Response, err
+	return object, err
 }
 
 func (api *Api) CreateUser(user User) (User, error) {
