@@ -52,6 +52,18 @@ func (api *Api) CreateOrUpdateUser(user User) (User, error) {
 	return object.Response, err
 }
 
+func (api *Api) CreateOrUpdateManyUsers(users []User) ([]User, error) {
+	var object MultipleUser
+
+	_, err := api.postHttpRequest(
+		"/users/created_or_update_many.json",
+		map[string]User{"users": users},
+		&object,
+	)
+
+	return object.Response, err
+}
+
 func (api *Api) CreateUser(user User) (User, error) {
 	var object SingleUser
 
@@ -98,4 +110,10 @@ func (api *Api) returnSingleUser(response *resty.Response) (User) {
 	api.parseResponseToInterface(response, &object)
 
 	return object.Response
+}
+
+func (users *Users) AppendUsers(user User) []User {
+	users.Users = append(users.Users, user)
+
+	return users.Users
 }
