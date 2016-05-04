@@ -11,7 +11,7 @@ type ZendeskConfiguration struct {
 type Attachment struct{}
 type Via struct{}
 
-type Users struct {
+type ManyUsers struct {
 	Users []User
 }
 

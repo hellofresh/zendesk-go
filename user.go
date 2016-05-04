@@ -57,7 +57,7 @@ func (api *Api) CreateOrUpdateManyUsers(users []User) ([]User, error) {
 
 	_, err := api.postHttpRequest(
 		"/users/created_or_update_many.json",
-		map[string]User{"users": users},
+		map[string][]User{"users": users},
 		&object,
 	)
 
@@ -112,7 +112,7 @@ func (api *Api) returnSingleUser(response *resty.Response) (User) {
 	return object.Response
 }
 
-func (users *Users) AppendUsers(user User) []User {
+func (users *ManyUsers) AppendUsers(user User) []User {
 	users.Users = append(users.Users, user)
 
 	return users.Users
