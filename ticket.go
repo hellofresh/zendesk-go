@@ -2,8 +2,12 @@ package zendesk
 
 import (
 	"fmt"
-	"strings"
+	"gopkg.in/resty.v0"
 )
+
+type TicketApiHandler struct {
+	client Client
+}
 
 type SingleTicket struct {
 	Response Ticket `json:"ticket"`
@@ -13,107 +17,84 @@ type MultipleTicket struct {
 	Response []Ticket `json:"tickets"`
 }
 
-func (api *Api) GetTicket(id int) (Ticket, error) {
-	var object SingleTicket
-
-	response, err := api.getHttpRequest(
+func (t TicketApiHandler) GetById(id int) (Ticket, error) {
+	response, err := t.client.get(
 		fmt.Sprintf("/tickets/%d.json", id),
 		nil,
 	)
 
-	api.parseResponseToInterface(response, &object)
+	if err != nil {
 
-	return object.Response, err
+	}
+
+	return t.parseSingleObject(response), err
 }
 
-func (api *Api) GetTickets() ([]Ticket, error) {
-	return api.getMultiple("/tickets.json");
-}
-
-func (api *Api) GetRecentTickets() ([]Ticket, error) {
-	return api.getMultiple("/tickets/recent.json");
-}
-
-func (api *Api) GetTicketsFromOrganization(id int) ([]Ticket, error) {
-	return api.getMultiple(
-		fmt.Sprintf("/organizations/%d/tickets.json", id),
-	)
-}
-
-func (api *Api) GetManyTickets(ids []string) ([]Ticket, error) {
-	return api.getMultiple(
-		fmt.Sprintf("/show_many.json?ids=%s", strings.Join(ids, ",")),
-	)
-}
-
-func (api *Api) GetRequestedTicketsFromUser(id int) ([]Ticket, error) {
-	return api.getMultiple(
-		fmt.Sprintf("users/%d/tickets/requested.json", id),
-	)
-}
-
-func (api *Api) GetCcdTicketsFromUser(id int) ([]Ticket, error) {
-	return api.getMultiple(
-		fmt.Sprintf("users/%d/tickets/ccd.json", id),
-	)
-}
-
-func (api *Api) GetAssignedTicketsFromUser(id int) ([]Ticket, error) {
-	return api.getMultiple(
-		fmt.Sprintf("users/%d/tickets/assigned.json", id),
-	)
-}
-
-func (api *Api) CreateTicket(ticket Ticket) (Ticket, error) {
-	var object SingleTicket
-
-	_, err := api.postHttpRequest(
+func (t TicketApiHandler) GetAll() ([]Ticket, error) {
+	response, err := t.client.get(
 		"/tickets.json",
-		map[string]Ticket{"ticket": ticket},
-		&object,
-	)
-
-	return object.Response, err
-}
-
-func (api *Api) UpdateTicket(ticket Ticket) (Ticket, error) {
-	var object SingleTicket
-
-	_, err := api.updateHttpRequest(
-		fmt.Sprintf("/tickets/%d.json", ticket.Id),
-		map[string]Ticket{"ticket": ticket},
-		&object,
-	)
-
-	return object.Response, err
-}
-
-func (api *Api) UpdateTicketMarkAsSpam(id int) (int, error) {
-	response, err := api.updateHttpRequestGetResponse(
-		fmt.Sprintf("/tickets/%d.json", id),
 		nil,
 	)
 
-	return response.StatusCode(), err
+	if err != nil {
+
+	}
+
+	return t.parseMultiObjects(response), err
 }
 
-func (api *Api) DeleteTicket(id int) (int, error) {
-	response, err := api.deleteHttpRequest(
+func (t TicketApiHandler) Create(v Ticket) (Ticket, error) {
+	var object SingleTicket
+
+	_, err := t.client.post(
+		"/tickets.json",
+		map[string]Ticket{"ticket": v},
+		&object,
+	)
+
+	return object.Response, err
+}
+
+func (t TicketApiHandler) CreateOrUpdate(v Ticket) (Ticket, error) {
+	return v, nil
+}
+
+func (t TicketApiHandler) CreateOrUpdateMany(v []Ticket) (Ticket, error) {
+	return Ticket{}, nil
+}
+
+func (t TicketApiHandler) Update(v Ticket) (Ticket, error) {
+	var object SingleTicket
+
+	_, err := t.client.put(
+		fmt.Sprintf("/tickets/%d.json", v.Id),
+		map[string]Ticket{"ticket": v},
+		&object,
+	)
+
+	return object.Response, err
+}
+
+func (t TicketApiHandler) Delete(id int) (int, error) {
+	response, err := t.client.delete(
 		fmt.Sprintf("/tickets/%d.json", id),
 	)
 
 	return response.StatusCode(), err
 }
 
-func (api *Api) getMultiple(url string) ([]Ticket, error) {
+func (t TicketApiHandler) parseMultiObjects(response *resty.Response) []Ticket {
 	var object MultipleTicket
 
-	response, err := api.getHttpRequest(
-		url,
-		nil,
-	)
+	t.client.parseResponseToInterface(response, &object)
 
-	api.parseResponseToInterface(response, &object)
+	return object.Response
+}
 
-	return object.Response, err
+func (t TicketApiHandler) parseSingleObject(response *resty.Response) Ticket {
+	var object SingleTicket
+
+	t.client.parseResponseToInterface(response, &object)
+
+	return object.Response
 }
