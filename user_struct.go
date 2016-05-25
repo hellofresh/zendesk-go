@@ -43,6 +43,8 @@ type User struct {
 	UserFields          map[string]string `json:"user_fields,omitempty"`
 }
 
+type Attachment struct{}
+
 func (u *User) FormatPhone(country string) {
 	if u.Phone != "" {
 		num, _ := libphonenumber.Parse(u.Phone, strings.ToUpper(country))
