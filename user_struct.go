@@ -40,6 +40,7 @@ type User struct {
 	Suspended           bool `json:"suspended,omitempty"`
 	RestrictedAgent     bool `json:"restricted_agent,omitempty"`
 	Photo               *Attachment `json:"photo,omitempty"`
+	UserFields          map[string]string `json:"user_fields,omitempty"`
 }
 
 type Attachment struct{}
