@@ -10,7 +10,7 @@ type ManyUsers struct {
 }
 
 type User struct {
-	Id                  int`json:"id,omitempty"`
+	Id                  int64 `json:"id,omitempty"`
 	Url                 string `json:"url,omitempty"`
 	Name                string `json:"name,omitempty"`
 	ExternalId          string `json:"external_id,omitempty"`
