@@ -187,7 +187,7 @@ client.ZendeskApi().DeleteTicket(1)
 ## Search function available
 
 #### TicketSearch
-Return a Search result containg only tickets
+Return a Search result containing only tickets
 
 ```
 client.ZendeskApi().TicketSearch("Test")
