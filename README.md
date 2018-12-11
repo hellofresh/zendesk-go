@@ -183,3 +183,12 @@ Delete an existing ticket
 ```
 client.ZendeskApi().DeleteTicket(1)
 ```
+
+## Search function available
+
+#### TicketSearch
+Return a Search result containg only tickets
+
+```
+client.ZendeskApi().TicketSearch("Test")
+```
