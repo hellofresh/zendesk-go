@@ -2,7 +2,8 @@ package zendesk
 
 import (
 	"fmt"
-	"gopkg.in/resty.v0"
+
+	resty "gopkg.in/resty.v0"
 )
 
 type TicketApiHandler struct {

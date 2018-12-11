@@ -2,12 +2,13 @@ package test
 
 import (
 	"testing"
-	"github.com/hellofresh/zendesk-go"
+
+	zendesk "github.com/hellofresh/zendesk-go"
 )
 
 var client = zendesk.FromToken(
 	zendesk.LoadConfiguration("./../config/configuration.yml"),
-);
+)
 
 var id int
 
@@ -38,7 +39,7 @@ func TestUserApiHandler_GetById(t *testing.T) {
 
 func TestUserApiHandler_Create(t *testing.T) {
 	user := zendesk.User{
-		Name: "Felipe Pieretti Umpierre",
+		Name:  "Felipe Pieretti Umpierre",
 		Email: "fum@hellofresh.com",
 	}
 
@@ -52,7 +53,7 @@ func TestUserApiHandler_Create(t *testing.T) {
 
 func TestUserApiHandler_CreateOrUpdate(t *testing.T) {
 	user := zendesk.User{
-		Name: "Felipe Pieretti Umpierre = Updated",
+		Name:  "Felipe Pieretti Umpierre = Updated",
 		Email: "fum@hellofresh.com",
 	}
 
@@ -68,12 +69,12 @@ func TestUserApiHandler_CreateOrUpdateMany(t *testing.T) {
 	var many zendesk.ManyUsers
 
 	many.AppendUsers(zendesk.User{
-		Name: "User 1",
+		Name:  "User 1",
 		Email: "user-1@hellofresh.com",
 	})
 
 	many.AppendUsers(zendesk.User{
-		Name: "User-2",
+		Name:  "User-2",
 		Email: "user-2@hellofresh.com",
 	})
 
@@ -96,8 +97,8 @@ func TestUserApiHandler_Delete(t *testing.T) {
 
 func TestUserApiHandler_Update(t *testing.T) {
 	user := zendesk.User{
-		Id: id,
-		Name: "Felipe Pieretti Umpierre - hallo",
+		Id:    id,
+		Name:  "Felipe Pieretti Umpierre - hallo",
 		Email: "fum@hellofresh.com",
 	}
 
@@ -106,6 +107,22 @@ func TestUserApiHandler_Update(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error: %s", err)
 		t.Fail()
+	}
+}
+
+// --------- SEARCH --------
+
+func TestSearchApiHandler_Search(t *testing.T) {
+	tickets, err := client.Search().SearchTickets("TEST")
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+
+	for _, ticket := range tickets.Tickets {
+		id = ticket.Id
+		break
 	}
 }
 
@@ -171,7 +188,7 @@ func TestTicketApiHandler_Delete(t *testing.T) {
 
 func TestTicketApiHandler_Update(t *testing.T) {
 	ticket := zendesk.Ticket{
-		Id: id,
+		Id:          id,
 		Description: "Test ticket",
 	}
 
