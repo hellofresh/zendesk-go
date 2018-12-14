@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"gopkg.in/resty.v0"
+	resty "gopkg.in/resty.v0"
 )
 
 type Client struct {
@@ -23,6 +23,14 @@ func (c Client) Ticket() TicketApiHandler {
 
 func (c Client) Search() SearchApiHandler {
 	return SearchApiHandler{c}
+}
+
+func (c Client) TicketMetric() TicketMetricApiHandler {
+	return TicketMetricApiHandler{c}
+}
+
+func (c Client) SatisfactionRating() SatisfactionRatingApiHandler {
+	return SatisfactionRatingApiHandler{c}
 }
 
 func (c Client) toFullUrl(path string) string {
