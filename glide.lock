@@ -1,0 +1,20 @@
+hash: 27115a2a0af1c783ee899e7a74cf9af7591d1879b16f937a41529aae79d3df79
+updated: 2018-12-17T17:14:56.669947868+01:00
+imports:
+- name: github.com/golang/protobuf
+  version: f0a097ddac24fb00e07d2ac17f8671423f3ea47c
+  subpackages:
+  - proto
+- name: github.com/ttacon/builder
+  version: 7f152c3cf4714fd6318739f8f3dbcd14c2a18b39
+- name: github.com/ttacon/libphonenumber
+  version: 1197dfb91fa03c779576ad248ad5ca0a43fb3a31
+- name: golang.org/x/net
+  version: 4876518f9e71663000c348837735820161a42df7
+  subpackages:
+  - publicsuffix
+- name: gopkg.in/resty.v0
+  version: aed15a666de54595af7d8895aa7299ceff5635f8
+- name: gopkg.in/yaml.v2
+  version: a83829b6f1293c91addabc89d0571c246397bbf4
+testImports: []
