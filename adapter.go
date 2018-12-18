@@ -1,6 +1,6 @@
 package zendesk
 
-import "gopkg.in/resty.v0"
+import resty "gopkg.in/resty.v0"
 
 type ZendeskApi interface {
 	GetById(id int) (interface{}, error)

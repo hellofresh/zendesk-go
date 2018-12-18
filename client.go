@@ -1,14 +1,16 @@
 package zendesk
 
 import (
-	"gopkg.in/resty.v0"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"strings"
+
+	resty "gopkg.in/resty.v0"
 )
 
 type Client struct {
-	domain string
-	client *resty.Client
+	domain     string
+	client     *resty.Client
 	apiVersion string
 }
 
@@ -20,8 +22,25 @@ func (c Client) Ticket() TicketApiHandler {
 	return TicketApiHandler{c}
 }
 
+func (c Client) Search() SearchApiHandler {
+	return SearchApiHandler{c}
+}
+
+func (c Client) TicketMetric() TicketMetricApiHandler {
+	return TicketMetricApiHandler{c}
+}
+
+func (c Client) SatisfactionRating() SatisfactionRatingApiHandler {
+	return SatisfactionRatingApiHandler{c}
+}
+
 func (c Client) toFullUrl(path string) string {
 	return fmt.Sprintf("https://%v.zendesk.com/api/%s/%s", c.domain, c.apiVersion, path)
+}
+
+func (c Client) toPath(path string) string {
+	baseURL := fmt.Sprintf("https://%v.zendesk.com/api/%s", c.domain, c.apiVersion)
+	return strings.Replace(path, baseURL, "", -1)
 }
 
 func (c Client) get(path string, params map[string]string) (*resty.Response, error) {
