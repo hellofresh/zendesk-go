@@ -54,7 +54,7 @@ func (s SearchApiHandler) PrevPage(t TicketSearch) (TicketSearch, error) {
 	)
 
 	if err != nil {
-
+		return TicketSearch{}, err
 	}
 
 	return s.parseResults(response), err
