@@ -2,6 +2,7 @@ package zendesk
 
 import (
 	"fmt"
+	"log"
 
 	resty "gopkg.in/resty.v0"
 )
@@ -35,12 +36,12 @@ func (s SearchApiHandler) SearchTickets(searchString string, sortBy string, sort
 
 func (s SearchApiHandler) NextPage(t TicketSearch) (TicketSearch, error) {
 	response, err := s.client.get(
-		t.NextPage,
+		s.client.toPath(t.NextPage),
 		nil,
 	)
 
 	if err != nil {
-
+		log.Panicln(err)
 	}
 
 	return s.parseResults(response), err
@@ -48,7 +49,7 @@ func (s SearchApiHandler) NextPage(t TicketSearch) (TicketSearch, error) {
 
 func (s SearchApiHandler) PrevPage(t TicketSearch) (TicketSearch, error) {
 	response, err := s.client.get(
-		t.PrevPage,
+		s.client.toPath(t.PrevPage),
 		nil,
 	)
 

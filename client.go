@@ -3,6 +3,7 @@ package zendesk
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	resty "gopkg.in/resty.v0"
 )
@@ -35,6 +36,11 @@ func (c Client) SatisfactionRating() SatisfactionRatingApiHandler {
 
 func (c Client) toFullUrl(path string) string {
 	return fmt.Sprintf("https://%v.zendesk.com/api/%s/%s", c.domain, c.apiVersion, path)
+}
+
+func (c Client) toPath(path string) string {
+	baseURL := fmt.Sprintf("https://%v.zendesk.com/api/%s", c.domain, c.apiVersion)
+	return strings.Replace(path, baseURL, "", -1)
 }
 
 func (c Client) get(path string, params map[string]string) (*resty.Response, error) {
