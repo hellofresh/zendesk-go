@@ -33,6 +33,32 @@ func (s SearchApiHandler) SearchTickets(searchString string, sortBy string, sort
 	return s.parseResults(response), err
 }
 
+func (s SearchApiHandler) NextPage(t TicketSearch) (TicketSearch, error) {
+	response, err := s.client.get(
+		t.NextPage,
+		nil,
+	)
+
+	if err != nil {
+
+	}
+
+	return s.parseResults(response), err
+}
+
+func (s SearchApiHandler) PrevPage(t TicketSearch) (TicketSearch, error) {
+	response, err := s.client.get(
+		t.PrevPage,
+		nil,
+	)
+
+	if err != nil {
+
+	}
+
+	return s.parseResults(response), err
+}
+
 func (s SearchApiHandler) parseResults(response *resty.Response) TicketSearch {
 	var object TicketSearch
 
