@@ -10,9 +10,19 @@ type SearchApiHandler struct {
 	client Client
 }
 
-func (s SearchApiHandler) SearchTickets(searchString string) (TicketSearch, error) {
+func (s SearchApiHandler) SearchTickets(searchString string, sortBy string, sortOrder string) (TicketSearch, error) {
+	urlString := fmt.Sprintf("/search.json?query=type:ticket %s", searchString)
+
+	if len(sortBy) > 0 {
+		urlString = fmt.Sprintf(urlString+"&sort_by=%s", sortBy)
+	}
+
+	if len(sortBy) > 0 {
+		urlString = fmt.Sprintf(urlString+"&sort_order=%s", sortOrder)
+	}
+
 	response, err := s.client.get(
-		fmt.Sprintf("/search.json?query=type:ticket %s", searchString),
+		urlString,
 		nil,
 	)
 
