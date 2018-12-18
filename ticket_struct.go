@@ -1,5 +1,7 @@
 package zendesk
 
+import "time"
+
 type Via struct{}
 
 type CustomFields struct {
@@ -36,6 +38,6 @@ type Ticket struct {
 	FollowupIds         []int             `json:"followup_ids,omitempty"`
 	TicketFormId        int               `json:"ticket_form_id,omitempty"`
 	BrandId             int               `json:"brand_id,omitempty"`
-	CreatedAt           string            `json:"created_at,omitempty"`
-	UpdatedAt           string            `json:"updated_at,omitempty"`
+	CreatedAt           *time.Time        `json:"created_at,omitempty"`
+	UpdatedAt           *time.Time        `json:"updated_at,omitempty"`
 }
