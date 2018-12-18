@@ -2,7 +2,6 @@ package zendesk
 
 import (
 	"fmt"
-	"log"
 
 	resty "gopkg.in/resty.v0"
 )
@@ -41,7 +40,7 @@ func (s SearchApiHandler) NextPage(t TicketSearch) (TicketSearch, error) {
 	)
 
 	if err != nil {
-		log.Panicln(err)
+		return TicketSearch{}, err
 	}
 
 	return s.parseResults(response), err
