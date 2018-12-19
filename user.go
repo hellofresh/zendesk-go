@@ -2,7 +2,9 @@ package zendesk
 
 import (
 	"fmt"
-	"gopkg.in/resty.v0"
+	"strings"
+
+	resty "gopkg.in/resty.v0"
 )
 
 type UserApiHandler struct {
@@ -14,7 +16,10 @@ type SingleUser struct {
 }
 
 type MultipleUser struct {
-	Response []User `json:"users"`
+	Response     []User `json:"users"`
+	NextPage     string `json:next_page,omitempty`
+	PreviousPage string `json:previous_page,omitempty`
+	Count        int    `json:count`
 }
 
 func (u UserApiHandler) GetById(id int) (User, error) {
@@ -30,17 +35,21 @@ func (u UserApiHandler) GetById(id int) (User, error) {
 	return u.parseSingleObject(response), err
 }
 
-func (u UserApiHandler) GetAll() ([]User, error) {
+func (u UserApiHandler) GetAll(path string) ([]User, error) {
+	if path == "" {
+		path = "/users.json"
+	}
+
 	response, err := u.client.get(
-		"/users.json",
+		path,
 		nil,
 	)
 
 	if err != nil {
-
+		return nil, err
 	}
 
-	return u.parseMultiObjects(response), err
+	return u.parseMultiObjects(response)
 }
 
 func (u UserApiHandler) Create(v User) (User, error) {
@@ -99,12 +108,29 @@ func (u UserApiHandler) Delete(id int) (int, error) {
 	return response.StatusCode(), err
 }
 
-func (u UserApiHandler) parseMultiObjects(response *resty.Response) []User {
+func (u UserApiHandler) parseMultiObjects(response *resty.Response) ([]User, error) {
+	users := ManyUsers{}
+	var er error
+
 	var object MultipleUser
 
 	u.client.parseResponseToInterface(response, &object)
 
-	return object.Response
+	users.ContcatUsers(object.Response)
+	if object.NextPage != "" {
+		slices := strings.Split(object.NextPage, "/")
+		path := "/" + slices[len(slices)-1]
+
+		usrs, err := u.GetAll(path)
+
+		if err != nil {
+			er = err
+		} else {
+			users.ContcatUsers(usrs)
+		}
+	}
+
+	return users.Users, er
 }
 
 func (u UserApiHandler) parseSingleObject(response *resty.Response) User {
