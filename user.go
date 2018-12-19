@@ -17,9 +17,9 @@ type SingleUser struct {
 
 type MultipleUser struct {
 	Response     []User `json:"users"`
-	NextPage     string `json:next_page,omitempty`
-	PreviousPage string `json:previous_page,omitempty`
-	Count        int    `json:count`
+	NextPage     string `json:"next_page,omitempty"`
+	PreviousPage string `json:"previous_page,omitempty"`
+	Count        int    `json:"count"`
 }
 
 func (u UserApiHandler) GetById(id int) (User, error) {

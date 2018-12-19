@@ -2,7 +2,9 @@ package zendesk
 
 import (
 	"fmt"
-	"gopkg.in/resty.v0"
+	"strings"
+
+	resty "gopkg.in/resty.v0"
 )
 
 type TicketApiHandler struct {
@@ -14,7 +16,10 @@ type SingleTicket struct {
 }
 
 type MultipleTicket struct {
-	Response []Ticket `json:"tickets"`
+	Response     []Ticket `json:"tickets"`
+	NextPage     string   `json:"next_page,omitempty"`
+	PreviousPage string   `json:"previous_page,omitempty"`
+	Count        int      `json:"count"`
 }
 
 func (t TicketApiHandler) GetById(id int) (Ticket, error) {
@@ -30,17 +35,21 @@ func (t TicketApiHandler) GetById(id int) (Ticket, error) {
 	return t.parseSingleObject(response), err
 }
 
-func (t TicketApiHandler) GetAll() ([]Ticket, error) {
+func (t TicketApiHandler) GetAll(path string) ([]Ticket, error) {
+	if path == "" {
+		path = "/tickets.json"
+	}
+
 	response, err := t.client.get(
-		"/tickets.json",
+		path,
 		nil,
 	)
 
 	if err != nil {
-
+		return nil, err
 	}
 
-	return t.parseMultiObjects(response), err
+	return t.parseMultiObjects(response)
 }
 
 func (t TicketApiHandler) Create(v Ticket) (Ticket, error) {
@@ -83,12 +92,29 @@ func (t TicketApiHandler) Delete(id int) (int, error) {
 	return response.StatusCode(), err
 }
 
-func (t TicketApiHandler) parseMultiObjects(response *resty.Response) []Ticket {
+func (t TicketApiHandler) parseMultiObjects(response *resty.Response) ([]Ticket, error) {
+	tickets := ManyTickets{}
+	var er error
+
 	var object MultipleTicket
 
 	t.client.parseResponseToInterface(response, &object)
 
-	return object.Response
+	tickets.ContcatTickets(object.Response)
+	if object.NextPage != "" {
+		slices := strings.Split(object.NextPage, "/")
+		path := "/" + slices[len(slices)-1]
+
+		tckts, err := t.GetAll(path)
+
+		if err != nil {
+			er = err
+		} else {
+			tickets.ContcatTickets(tckts)
+		}
+	}
+
+	return tickets.Tickets, er
 }
 
 func (t TicketApiHandler) parseSingleObject(response *resty.Response) Ticket {
