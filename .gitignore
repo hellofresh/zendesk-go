@@ -24,7 +24,4 @@ _testmain.go
 *.prof
 
 /vendor
-/.idea/modules.xml
-/.idea/vcs.xml
-/.idea/workspace.xml
-/.idea/zendesk-go.iml
+/.idea/
