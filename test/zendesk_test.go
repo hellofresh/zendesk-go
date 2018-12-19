@@ -2,7 +2,7 @@ package test
 
 import (
 	"testing"
-	"github.com/hellofresh/zendesk-go"
+	"zendesk-go"
 )
 
 var client = zendesk.FromToken(
@@ -22,13 +22,22 @@ func TestUserApiHandler_GetAll(t *testing.T) {
 	}
 
 	for _, user := range users {
-		id = user.Id
+		id = int(user.Id)
 		break
 	}
 }
 
 func TestUserApiHandler_GetById(t *testing.T) {
 	_, err := client.User().GetById(id)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
+func TestUserApiHandler_GetAllAgents(t *testing.T) {
+	_, err := client.User().GetAllAgents()
 
 	if err != nil {
 		t.Errorf("Error: %s", err)
@@ -96,7 +105,7 @@ func TestUserApiHandler_Delete(t *testing.T) {
 
 func TestUserApiHandler_Update(t *testing.T) {
 	user := zendesk.User{
-		Id: id,
+		Id: int64(id),
 		Name: "Felipe Pieretti Umpierre - hallo",
 		Email: "fum@hellofresh.com",
 	}

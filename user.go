@@ -43,6 +43,20 @@ func (u UserApiHandler) GetAll() ([]User, error) {
 	return u.parseMultiObjects(response), err
 }
 
+func (u UserApiHandler) GetAllAgents() ([]User, error) {
+	response, err := u.client.get(
+		"/users.json",
+		map[string]string{"role[]": "admin"},
+	)
+
+	if err != nil {
+
+	}
+
+	return u.parseMultiObjects(response), err
+}
+
+
 func (u UserApiHandler) Create(v User) (User, error) {
 	var object SingleUser
 
