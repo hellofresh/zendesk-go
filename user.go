@@ -46,14 +46,29 @@ func (u UserApiHandler) GetAll() ([]User, error) {
 func (u UserApiHandler) GetAllAgents() ([]User, error) {
 	response, err := u.client.get(
 		"/users.json",
-		map[string]string{"role[]": "admin"},
+		map[string]string{"role": "admin"},
 	)
 
 	if err != nil {
-
+		return nil, err
 	}
 
-	return u.parseMultiObjects(response), err
+	users := u.parseMultiObjects(response)
+
+	// This could be done in a single API call with role[]=agent&role[]=admin but the current interface makes doing this difficult
+	response, err = u.client.get(
+		"/users.json",
+		map[string]string{"role": "agent"},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	adminUsers := u.parseMultiObjects(response)
+	users = append(users, adminUsers...)
+
+	return users, err
 }
 
 
