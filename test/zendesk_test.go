@@ -191,3 +191,12 @@ func TestTicketApiHandler_Update(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestPhoneNumberApiHandler_GetAll(t *testing.T) {
+	_, err := client.PhoneNumber().GetAll()
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
