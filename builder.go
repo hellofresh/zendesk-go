@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"gopkg.in/yaml.v2"
 	"gopkg.in/resty.v0"
+	"gopkg.in/yaml.v2"
 )
 
 func FromToken(config ZendeskConfiguration) Client {
@@ -16,9 +16,9 @@ func FromToken(config ZendeskConfiguration) Client {
 	restyClient.SetHeader("Content-Type", "application/json")
 
 	return Client{
-		domain: config.Domain,
+		domain:     config.Domain,
 		apiVersion: config.ApiVersion,
-		client: restyClient,
+		client:     restyClient,
 	}
 }
 

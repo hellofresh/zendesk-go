@@ -71,7 +71,6 @@ func (u UserApiHandler) GetAllAgents() ([]User, error) {
 	return users, err
 }
 
-
 func (u UserApiHandler) Create(v User) (User, error) {
 	var object SingleUser
 
