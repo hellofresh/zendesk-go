@@ -32,7 +32,7 @@ type User struct {
 	Notes               string `json:"notes,omitempty"`
 	OrganizationId      int `json:"organization_id,omitempty"`
 	Role                string `json:"role,omitempty"`
-	CustomRoleId        string `json:"custom_role_id,omitempty"`
+	CustomRoleId        int `json:"custom_role_id,omitempty"`
 	Moderator           bool `json:"moderator,omitempty"`
 	TicketRestriction   string `json:"ticket_restriction,omitempty"`
 	OnlyPrivateComments bool `json:"only_private_comments,omitempty"`
