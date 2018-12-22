@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"gopkg.in/yaml.v2"
-	"gopkg.in/resty.v0"
+	resty "gopkg.in/resty.v0"
+	yaml "gopkg.in/yaml.v2"
 )
 
-func FromToken(config ZendeskConfiguration) Client {
+// FromToken func loads Client basedon Auth Basic access
+func FromToken(config Configuration) Client {
 	username := fmt.Sprintf("%s/token", config.Email)
 
 	restyClient := resty.SetBasicAuth(username, config.Token)
@@ -16,24 +17,25 @@ func FromToken(config ZendeskConfiguration) Client {
 	restyClient.SetHeader("Content-Type", "application/json")
 
 	return Client{
-		domain: config.Domain,
-		apiVersion: config.ApiVersion,
-		client: restyClient,
+		domain:     config.Domain,
+		apiVersion: config.APIVersion,
+		client:     restyClient,
 	}
 }
 
-func LoadConfiguration(path string) ZendeskConfiguration {
-	zendeskConfiguration := ZendeskConfiguration{}
+// LoadConfiguration func reads cnfiguration yml file
+func LoadConfiguration(path string) Configuration {
+	zendeskConfiguration := Configuration{}
 	zendeskConfigurationFile, err := ioutil.ReadFile(path)
 
 	if err != nil {
-		fmt.Errorf("error: %v", err)
+		panic(fmt.Errorf("error: %v", err))
 	}
 
 	err = yaml.Unmarshal(zendeskConfigurationFile, &zendeskConfiguration)
 
 	if err != nil {
-		fmt.Errorf("error: %v", err)
+		panic(fmt.Errorf("error: %v", err))
 	}
 
 	return zendeskConfiguration

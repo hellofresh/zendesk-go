@@ -4,25 +4,31 @@ import (
 	"fmt"
 	"strings"
 
+	"./models"
+
 	resty "gopkg.in/resty.v0"
 )
 
-type UserApiHandler struct {
+// UserAPIHandler struct
+type UserAPIHandler struct {
 	client Client
 }
 
+// SingleUser result
 type SingleUser struct {
-	Response User `json:"user"`
+	Response models.User `json:"user"`
 }
 
+// MultipleUser result
 type MultipleUser struct {
-	Response     []User `json:"users"`
-	NextPage     string `json:"next_page,omitempty"`
-	PreviousPage string `json:"previous_page,omitempty"`
-	Count        int    `json:"count"`
+	Response     []models.User `json:"users"`
+	NextPage     string        `json:"next_page,omitempty"`
+	PreviousPage string        `json:"previous_page,omitempty"`
+	Count        int           `json:"count"`
 }
 
-func (u UserApiHandler) GetById(id int) (User, error) {
+// GetByID find an user by id
+func (u UserAPIHandler) GetByID(id int) (models.User, error) {
 	response, err := u.client.get(
 		fmt.Sprintf("/users/%d.json", id),
 		nil,
@@ -35,7 +41,15 @@ func (u UserApiHandler) GetById(id int) (User, error) {
 	return u.parseSingleObject(response), err
 }
 
-func (u UserApiHandler) GetAll(path string) ([]User, error) {
+// GetAll find all users
+func (u UserAPIHandler) GetAll() ([]models.User, error) {
+	path := "/users.json"
+
+	return u.GetAllFrom(path)
+}
+
+// GetAllFrom find all users begining by page
+func (u UserAPIHandler) GetAllFrom(path string) ([]models.User, error) {
 	if path == "" {
 		path = "/users.json"
 	}
@@ -52,55 +66,60 @@ func (u UserApiHandler) GetAll(path string) ([]User, error) {
 	return u.parseMultiObjects(response)
 }
 
-func (u UserApiHandler) Create(v User) (User, error) {
+// Create an user
+func (u UserAPIHandler) Create(v models.User) (models.User, error) {
 	var object SingleUser
 
 	_, err := u.client.post(
 		"/users.json",
-		map[string]User{"user": v},
+		map[string]models.User{"user": v},
 		&object,
 	)
 
 	return object.Response, err
 }
 
-func (u UserApiHandler) CreateOrUpdate(v User) (User, error) {
+// CreateOrUpdate an user
+func (u UserAPIHandler) CreateOrUpdate(v models.User) (models.User, error) {
 	var object SingleUser
 
 	_, err := u.client.post(
 		"/users/create_or_update.json",
-		map[string]User{"user": v},
+		map[string]models.User{"user": v},
 		&object,
 	)
 
 	return object.Response, err
 }
 
-func (u UserApiHandler) CreateOrUpdateMany(v []User) (Job, error) {
+// CreateOrUpdateMany users
+func (u UserAPIHandler) CreateOrUpdateMany(v []models.User) (Job, error) {
 	var object Job
 
 	_, err := u.client.post(
 		"/users/create_or_update_many.json",
-		map[string][]User{"users": v},
+		map[string][]models.User{"users": v},
 		&object,
 	)
 
 	return object, err
 }
 
-func (u UserApiHandler) Update(v User) (User, error) {
+// Update an user
+func (u UserAPIHandler) Update(v models.User) (models.User, error) {
 	var object SingleUser
 
 	_, err := u.client.put(
-		fmt.Sprintf("/users/%d.json", v.Id),
-		map[string]User{"user": v},
+		fmt.Sprintf("/users/%d.json", *v.ID),
+		map[string]models.User{"user": v},
 		&object,
 	)
 
 	return object.Response, err
 }
 
-func (u UserApiHandler) Delete(id int) (int, error) {
+// Delete an user
+func (u UserAPIHandler) Delete(id int) (int, error) {
 	response, err := u.client.delete(
 		fmt.Sprintf("/users/%d.json", id),
 	)
@@ -108,8 +127,9 @@ func (u UserApiHandler) Delete(id int) (int, error) {
 	return response.StatusCode(), err
 }
 
-func (u UserApiHandler) parseMultiObjects(response *resty.Response) ([]User, error) {
-	users := ManyUsers{}
+// parseMultiObjects
+func (u UserAPIHandler) parseMultiObjects(response *resty.Response) ([]models.User, error) {
+	users := models.ManyUsers{}
 	var er error
 
 	var object MultipleUser
@@ -121,7 +141,7 @@ func (u UserApiHandler) parseMultiObjects(response *resty.Response) ([]User, err
 		slices := strings.Split(object.NextPage, "/")
 		path := "/" + slices[len(slices)-1]
 
-		usrs, err := u.GetAll(path)
+		usrs, err := u.GetAllFrom(path)
 
 		if err != nil {
 			er = err
@@ -133,7 +153,8 @@ func (u UserApiHandler) parseMultiObjects(response *resty.Response) ([]User, err
 	return users.Users, er
 }
 
-func (u UserApiHandler) parseSingleObject(response *resty.Response) User {
+// parseSingleObject
+func (u UserAPIHandler) parseSingleObject(response *resty.Response) models.User {
 	var object SingleUser
 
 	u.client.parseResponseToInterface(response, &object)

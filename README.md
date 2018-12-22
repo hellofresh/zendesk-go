@@ -9,10 +9,11 @@ How to use?
 Update the configuration.yml file inside config folder:
 
 ```
+api_version: "v2"
 domain: DOMAIN
 email: EMAIL
-password: PASSWORD
 token: TOKEN
+rate_limit: REQUESTS_PER_MINUTE
 ```
 
 The service uses API token to communicate with Zendesk.
@@ -22,7 +23,7 @@ The service uses API token to communicate with Zendesk.
 import "github.com/hellofresh/zendesk-go"
 
 func main() {
-    client, _ := zendesk.FromEnv(
+    client, _ := zendesk.FromToken(
         zendesk.LoadConfiguration("./config/configuration.yml"),
     )
 }
@@ -31,16 +32,16 @@ func main() {
 ## Basic
 ```
 user := zendesk.User {
-    Id: [id],
+    ID: [id],
     Name: [name],
     Email: [email],
 }
 
-client, _ := zendesk.FromEnv(
+client, _ := zendesk.FromToken(
     zendesk.LoadConfiguration("./config/configuration.yml"),
 )
 
-u, err := client.ZendeskApi().CreateOrUpdateUser(user)
+u, err := client.User().CreateOrUpdateUser(user)
 
 if err != nil {
     log.Println(err)
@@ -55,49 +56,49 @@ if err != nil {
 Return the user
 
 ```
-client.ZendeskApi().GetUser(1)
+client.User().GetUser(1)
 ```
 
 #### GetUsers
 Return the list of all users
 
 ```
-client.ZendeskApi().GetZendeskApi()
+client.User().GetZendeskApi()
 ```
 
 #### GetUsersByGroup
 Return the list of all users in a group
 
 ```
-client.ZendeskApi().GetUsersByGroup(4)
+client.User().GetUsersByGroup(4)
 ```
 
 #### CreateOrUpdateUser
 Create or update a user
 
 ```
-client.ZendeskApi().CreateOrUpdateUser(user)
+client.User().CreateOrUpdateUser(user)
 ```
 
 #### CreateUser
 Create a new user
 
 ```
-client.ZendeskApi().CreateUser(user)
+client.User().CreateUser(user)
 ```
 
 #### UpdateUser
 Update an existing user
 
 ```
-client.ZendeskApi().UpdateUser(user)
+client.User().UpdateUser(user)
 ```
 
 #### DeleteUser
 Delete an existing user
 
 ```
-client.ZendeskApi().DeleteUser(1)
+client.User().DeleteUser(1)
 ```
 
 ## Ticket function available
@@ -106,80 +107,94 @@ client.ZendeskApi().DeleteUser(1)
 Return the ticket
 
 ```
-client.ZendeskApi().GetTicket(1)
+client.Ticket().GetTicket(1)
 ```
 
 #### GetTickets
 Return the list of all tickets
 
 ```
-client.ZendeskApi().GetTickets()
+client.Ticket().GetTickets()
 ```
 
 #### GetRecentTickets
 Return the recent tickets
 
 ```
-client.ZendeskApi().GetRecentTickets()
+client.Ticket().GetRecentTickets()
 ```
 
 #### GetTicketsFromOrganization
 Return the tickets from an organization
 
 ```
-client.ZendeskApi().GetTicketsFromOrganization(10)
+client.Ticket().GetTicketsFromOrganization(10)
 ```
 
 #### GetManyTickets
 Return a list of tickets
 
 ```
-client.ZendeskApi().GetManyTickets(int[]{1, 2, 3, 5})
+client.Ticket().GetManyTickets(int[]{1, 2, 3, 5})
 ```
 
 #### GetRequestedTicketsFromUser
 Return the tickets requests by an user
 
 ```
-client.ZendeskApi().GetRequestedTicketsFromUser(2)
+client.Ticket().GetRequestedTicketsFromUser(2)
 ```
 
 #### GetCcdTicketsFromUser
 ```
-client.ZendeskApi().GetCcdTicketsFromUser(2)
+client.Ticket().GetCcdTicketsFromUser(2)
 ```
 
 #### GetAssignedTicketsFromUser
 Return the tickets assigned from user
 
 ```
-client.ZendeskApi().GetAssignedTicketsFromUser(2)
+client.Ticket().GetAssignedTicketsFromUser(2)
 ```
 
 #### CreateTicket
 Create a new ticket
 
 ```
-client.ZendeskApi().CreateTicket(ticket)
+client.Ticket().CreateTicket(ticket)
 ```
 
 #### UpdateTicket
 Update a ticket
 
 ```
-client.ZendeskApi().UpdateTicket(ticket)
+client.Ticket().UpdateTicket(ticket)
 ```
 
 #### UpdateTicketMarkAsSpam
 Update a ticket to mark as spam
 
 ```
-client.ZendeskApi().UpdateTicketMarkAsSpam(1)
+client.Ticket().UpdateTicketMarkAsSpam(1)
 ```
 
 #### DeleteTicket
 Delete an existing ticket
 
 ```
-client.ZendeskApi().DeleteTicket(1)
+client.Ticket().DeleteTicket(1)
+```
+
+#### LoadTicketComments
+Load all comments of an existing ticket
+
+```
+client.Ticket().LoadTickectComments(&ticket)
+```
+
+#### LoadComments
+Load all comments of many existing tickets
+
+```
+client.Ticket().LoadTickectComments(tickets)
 ```
