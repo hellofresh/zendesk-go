@@ -1,6 +1,12 @@
-version: 3
-
-pullapprove_conditions:
-- "base.ref == 'master'"
-
-extends: https://api.github.com/repos/hellofresh/zendesk-go/contents/.pullapprove.yml
+version: 2
+groups:
+  code-review:
+    approve_by_comment:
+      approve_regex: ^Approved
+      enabled: true
+      reject_regex: ^Rejected
+    required: 1
+    reset_on_push:
+      enabled: false
+    users:
+    - schivei
