@@ -1,1 +1,6 @@
-extends: hellofresh
+version: 3
+
+pullapprove_conditions:
+- "base.ref == 'master'"
+
+extends: https://api.github.com/repos/hellofresh/zendesk-go/contents/.pullapprove.yml
