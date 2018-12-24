@@ -5,8 +5,44 @@ groups:
       approve_regex: ^Approved
       enabled: true
       reject_regex: ^Rejected
-    required: 1
+    required: -1
     reset_on_push:
       enabled: false
     users:
-    - schivei
+    - albertojgomez
+    - aleksandrzhiliaev
+    - avromao
+    - bobdiem
+    - c4pone
+    - chrisfresh
+    - cschwarzqa
+    - darienhf
+    - endeveit
+    - fedebertolini
+    - georgizhivankin
+    - hellofresh-sync
+    - iuriinedostup
+    - jhuliano
+    - josemussa
+    - jvalecillos
+    - k11k11
+    - kaivg
+    - kieranajp
+    - krokonstantin
+    - luisandani
+    - mandoz
+    - nonnus
+    - nsimaria
+    - olvlvl
+    - pepijnsenders
+    - robertke
+    - schmidtks
+    - shonjord
+    - ssola
+    - stefvaessen
+    - tiagojsalmeida
+    - toebtoeb
+    - vannenc
+    - vxplus
+    - wellfreire
+    - zeelax
