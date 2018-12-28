@@ -37,5 +37,5 @@ type Ticket struct {
 
 type CustomField struct {
 	ID    int    `json:"id"`
-	Value string `json:"value"`
+	Value interface{} `json:"value"`
 }
