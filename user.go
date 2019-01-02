@@ -127,6 +127,19 @@ func (u UserApiHandler) Delete(id int) (int, error) {
 	return response.StatusCode(), err
 }
 
+
+func (u UserApiHandler) Merge(userIdToMerge int, userToKeep User) (User, error) {
+	var object SingleUser
+
+	_, err := u.client.put(
+		fmt.Sprintf("/users/%d/merge.json", userIdToMerge),
+		map[string]User{"user": userToKeep},
+		&object,
+	)
+
+	return object.Response, err
+}
+
 func (u UserApiHandler) parseMultiObjects(response *resty.Response) []User {
 	var object MultipleUser
 

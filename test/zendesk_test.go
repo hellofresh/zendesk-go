@@ -1,7 +1,9 @@
 package test
 
 import (
+	"fmt"
 	"testing"
+	"time"
 	"zendesk-go"
 )
 
@@ -96,6 +98,28 @@ func TestUserApiHandler_CreateOrUpdateMany(t *testing.T) {
 
 func TestUserApiHandler_Delete(t *testing.T) {
 	_, err := client.User().Delete(id)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
+func TestUserApiHandler_Merge(t *testing.T) {
+	user := zendesk.User{
+		Name:  "User 1",
+		Email: fmt.Sprintf("test-%d@hellofresh.com", time.Now().Unix()),
+	}
+	newUser, err := client.User().CreateOrUpdate(user)
+
+	user2 := zendesk.User{
+		Name:  "User 2",
+		Phone: "(415) 123-4567",
+	}
+
+	userToKeep, err := client.User().CreateOrUpdate(user2)
+
+	_, err = client.User().Merge(int(newUser.Id), userToKeep)
 
 	if err != nil {
 		t.Errorf("Error: %s", err)
