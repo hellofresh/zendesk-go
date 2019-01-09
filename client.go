@@ -24,6 +24,10 @@ func (c Client) PhoneNumber() PhoneNumberApiHandler {
 	return PhoneNumberApiHandler{c}
 }
 
+func (c Client) Comment() CommentApiHandler {
+	return CommentApiHandler{c}
+}
+
 func (c Client) toFullUrl(path string) string {
 	return fmt.Sprintf("https://%v.zendesk.com/api/%s/%s", c.domain, c.apiVersion, path)
 }

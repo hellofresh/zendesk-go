@@ -216,6 +216,24 @@ func TestTicketApiHandler_Update(t *testing.T) {
 	}
 }
 
+func TestTicketApiHandler_GetRequestedByUser(t *testing.T) {
+	_, err := client.Ticket().GetRequestedByUser(0)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
+func TestCommentApiHandler_GetForTicket(t *testing.T) {
+	_, err := client.Comment().GetForTicket(0)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
 func TestPhoneNumberApiHandler_GetAll(t *testing.T) {
 	_, err := client.PhoneNumber().GetAll()
 

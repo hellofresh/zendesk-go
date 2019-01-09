@@ -24,7 +24,6 @@ func (t TicketApiHandler) GetById(id int) (Ticket, error) {
 	)
 
 	if err != nil {
-
 	}
 
 	return t.parseSingleObject(response), err
@@ -37,7 +36,19 @@ func (t TicketApiHandler) GetAll() ([]Ticket, error) {
 	)
 
 	if err != nil {
+	}
 
+	return t.parseMultiObjects(response), err
+}
+
+func (t TicketApiHandler) GetRequestedByUser(userId int64) ([]Ticket, error) {
+	response, err := t.client.get(
+		fmt.Sprintf("/users/%d/tickets/requested.json", userId),
+		nil,
+	)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return t.parseMultiObjects(response), err
