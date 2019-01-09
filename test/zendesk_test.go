@@ -1,13 +1,15 @@
 package test
 
 import (
+	"fmt"
 	"testing"
-	"github.com/hellofresh/zendesk-go"
+	"time"
+	"zendesk-go"
 )
 
 var client = zendesk.FromToken(
 	zendesk.LoadConfiguration("./../config/configuration.yml"),
-);
+)
 
 var id int
 
@@ -22,7 +24,7 @@ func TestUserApiHandler_GetAll(t *testing.T) {
 	}
 
 	for _, user := range users {
-		id = user.Id
+		id = int(user.Id)
 		break
 	}
 }
@@ -36,9 +38,18 @@ func TestUserApiHandler_GetById(t *testing.T) {
 	}
 }
 
+func TestUserApiHandler_GetAllAgents(t *testing.T) {
+	_, err := client.User().GetAllAgents()
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
 func TestUserApiHandler_Create(t *testing.T) {
 	user := zendesk.User{
-		Name: "Felipe Pieretti Umpierre",
+		Name:  "Felipe Pieretti Umpierre",
 		Email: "fum@hellofresh.com",
 	}
 
@@ -52,7 +63,7 @@ func TestUserApiHandler_Create(t *testing.T) {
 
 func TestUserApiHandler_CreateOrUpdate(t *testing.T) {
 	user := zendesk.User{
-		Name: "Felipe Pieretti Umpierre = Updated",
+		Name:  "Felipe Pieretti Umpierre = Updated",
 		Email: "fum@hellofresh.com",
 	}
 
@@ -68,12 +79,12 @@ func TestUserApiHandler_CreateOrUpdateMany(t *testing.T) {
 	var many zendesk.ManyUsers
 
 	many.AppendUsers(zendesk.User{
-		Name: "User 1",
+		Name:  "User 1",
 		Email: "user-1@hellofresh.com",
 	})
 
 	many.AppendUsers(zendesk.User{
-		Name: "User-2",
+		Name:  "User-2",
 		Email: "user-2@hellofresh.com",
 	})
 
@@ -94,10 +105,32 @@ func TestUserApiHandler_Delete(t *testing.T) {
 	}
 }
 
+func TestUserApiHandler_Merge(t *testing.T) {
+	user := zendesk.User{
+		Name:  "User 1",
+		Email: fmt.Sprintf("test-%d@hellofresh.com", time.Now().Unix()),
+	}
+	newUser, err := client.User().CreateOrUpdate(user)
+
+	user2 := zendesk.User{
+		Name:  "User 2",
+		Phone: "(415) 123-4567",
+	}
+
+	userToKeep, err := client.User().CreateOrUpdate(user2)
+
+	_, err = client.User().Merge(int(newUser.Id), userToKeep)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
 func TestUserApiHandler_Update(t *testing.T) {
 	user := zendesk.User{
-		Id: id,
-		Name: "Felipe Pieretti Umpierre - hallo",
+		Id:    int64(id),
+		Name:  "Felipe Pieretti Umpierre - hallo",
 		Email: "fum@hellofresh.com",
 	}
 
@@ -171,11 +204,38 @@ func TestTicketApiHandler_Delete(t *testing.T) {
 
 func TestTicketApiHandler_Update(t *testing.T) {
 	ticket := zendesk.Ticket{
-		Id: id,
+		Id:          id,
 		Description: "Test ticket",
 	}
 
 	_, err := client.Ticket().Update(ticket)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
+func TestTicketApiHandler_GetRequestedByUser(t *testing.T) {
+	_, err := client.Ticket().GetRequestedByUser(0)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
+func TestCommentApiHandler_GetForTicket(t *testing.T) {
+	_, err := client.Comment().GetForTicket(0)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+		t.Fail()
+	}
+}
+
+func TestPhoneNumberApiHandler_GetAll(t *testing.T) {
+	_, err := client.PhoneNumber().GetAll()
 
 	if err != nil {
 		t.Errorf("Error: %s", err)

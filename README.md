@@ -40,7 +40,7 @@ client, _ := zendesk.FromEnv(
     zendesk.LoadConfiguration("./config/configuration.yml"),
 )
 
-u, err := client.ZendeskApi().CreateOrUpdateUser(user)
+u, err := client.User().CreateOrUpdate(user)
 
 if err != nil {
     log.Println(err)
@@ -51,135 +51,88 @@ if err != nil {
 
 ## User functions available
 
-#### GetUser
+#### Get user
 Return the user
 
 ```
-client.ZendeskApi().GetUser(1)
+client.User().GetById(1)
 ```
 
-#### GetUsers
+#### Get users
 Return the list of all users
 
 ```
-client.ZendeskApi().GetZendeskApi()
+client.User().GetAll()
 ```
 
-#### GetUsersByGroup
-Return the list of all users in a group
+#### Get agents
+Return the list of all agents
 
 ```
-client.ZendeskApi().GetUsersByGroup(4)
+client.User().GetAllAgents(4)
 ```
 
-#### CreateOrUpdateUser
+#### Create or update user
 Create or update a user
 
 ```
-client.ZendeskApi().CreateOrUpdateUser(user)
+client.User().CreateOrUpdate(user)
 ```
 
-#### CreateUser
+#### Create user
 Create a new user
 
 ```
-client.ZendeskApi().CreateUser(user)
+client.User().Create(user)
 ```
 
-#### UpdateUser
+#### Update user
 Update an existing user
 
 ```
-client.ZendeskApi().UpdateUser(user)
+client.User().Update(user)
 ```
 
-#### DeleteUser
+#### Delete user
 Delete an existing user
 
 ```
-client.ZendeskApi().DeleteUser(1)
+client.User().Delete(1)
 ```
 
 ## Ticket function available
 
-#### GetTicket
+#### Get ticket
 Return the ticket
 
 ```
-client.ZendeskApi().GetTicket(1)
+client.Ticket().GetById(1)
 ```
 
-#### GetTickets
+#### Get all tickets
 Return the list of all tickets
 
 ```
-client.ZendeskApi().GetTickets()
+client.Ticket().GetAll()
 ```
 
-#### GetRecentTickets
-Return the recent tickets
-
-```
-client.ZendeskApi().GetRecentTickets()
-```
-
-#### GetTicketsFromOrganization
-Return the tickets from an organization
-
-```
-client.ZendeskApi().GetTicketsFromOrganization(10)
-```
-
-#### GetManyTickets
-Return a list of tickets
-
-```
-client.ZendeskApi().GetManyTickets(int[]{1, 2, 3, 5})
-```
-
-#### GetRequestedTicketsFromUser
-Return the tickets requests by an user
-
-```
-client.ZendeskApi().GetRequestedTicketsFromUser(2)
-```
-
-#### GetCcdTicketsFromUser
-```
-client.ZendeskApi().GetCcdTicketsFromUser(2)
-```
-
-#### GetAssignedTicketsFromUser
-Return the tickets assigned from user
-
-```
-client.ZendeskApi().GetAssignedTicketsFromUser(2)
-```
-
-#### CreateTicket
+#### Create ticket
 Create a new ticket
 
 ```
-client.ZendeskApi().CreateTicket(ticket)
+client.Ticket().Create(ticket)
 ```
 
-#### UpdateTicket
+#### Update ticket
 Update a ticket
 
 ```
-client.ZendeskApi().UpdateTicket(ticket)
+client.Ticket().Create(ticket)
 ```
 
-#### UpdateTicketMarkAsSpam
-Update a ticket to mark as spam
-
-```
-client.ZendeskApi().UpdateTicketMarkAsSpam(1)
-```
-
-#### DeleteTicket
+#### Delete ticket
 Delete an existing ticket
 
 ```
-client.ZendeskApi().DeleteTicket(1)
+client.Ticket().Delete(1)
 ```
