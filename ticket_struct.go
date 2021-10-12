@@ -26,7 +26,6 @@ type Ticket struct {
 	Tags                []string      `json:"tags,omitempty"`
 	Via                 *Via          `json:"via,omitempty"`
 	CustomFields        []CustomField `json:"custom_fields,omitempty"`
-	SatisfactionRating  []string      `json:"satisfaction_rating,omitempty"`
 	SharingAgreementIds []int         `json:"sharing_agreement_ids,omitempty"`
 	FollowupIds         []int         `json:"followup_ids,omitempty"`
 	TicketFormId        int           `json:"ticket_form_id,omitempty"`
