@@ -2,16 +2,16 @@ package zendesk
 
 import (
 	"fmt"
-	"io/ioutil"
-
-	"gopkg.in/resty.v0"
+	"github.com/go-resty/resty/v2"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 )
 
 func FromToken(config ZendeskConfiguration) Client {
 	username := fmt.Sprintf("%s/token", config.Email)
 
-	restyClient := resty.SetBasicAuth(username, config.Token)
+	restyClient := resty.New()
+	restyClient.SetBasicAuth(username, config.Token)
 	restyClient.SetHeader("Accept", "application/json")
 	restyClient.SetHeader("Content-Type", "application/json")
 

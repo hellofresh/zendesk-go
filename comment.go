@@ -2,7 +2,7 @@ package zendesk
 
 import (
 	"fmt"
-	"gopkg.in/resty.v0"
+	"github.com/go-resty/resty/v2"
 )
 
 type CommentApiHandler struct {

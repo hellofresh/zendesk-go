@@ -3,7 +3,7 @@ package zendesk
 import (
 	"encoding/json"
 	"fmt"
-	"gopkg.in/resty.v0"
+	"github.com/go-resty/resty/v2"
 )
 
 type Client struct {
