@@ -1,10 +1,10 @@
-module zendesk-go
+module github.com/gomaps/zendesk-go
 
 go 1.18
 
 require (
-	github.com/ttacon/libphonenumber v1.2.1
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/ttacon/libphonenumber v1.2.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
